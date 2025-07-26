@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  CUSTOMER
+  WASHER
+}
+
+enum BookingStatus {
+  PENDING
+  ACCEPTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum PaymentMethod {
+  CARD
+  CASH
+  WALLET
+}
+
+enum DiscountType {
+  FLAT
+  PERCENT
+}
+
+model User {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String   @unique
+  email       String?  @unique
+  password    String?
+  role        UserRole @default(CUSTOMER)
+  isAvailable Boolean? @default(true)
+  address     String?
+  lat         Float?
+  lng         Float?
+
+  // Relations
+  bookings         Booking[]     @relation("CustomerBookings")
+  assignedBookings Booking[]     @relation("WasherBookings")
+  payments         Payment[]
+  reviewsGiven     Review[]      @relation("UserReviews")
+  reviewsReceived  Review[]      @relation("WasherReviews")
+  couponUsages     CouponUsage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  customerId    String
+  washerId      String?
+  serviceId     String
+  couponId      String?
+  status        BookingStatus @default(PENDING)
+  scheduledAt   DateTime
+  lat           Float
+  lng           Float
+  address       String
+  price         Float // after discount
+  originalPrice Float // before discount
+
+  // Relations
+  service      Service       @relation(fields: [serviceId], references: [id])
+  customer     User          @relation("CustomerBookings", fields: [customerId], references: [id])
+  washer       User?         @relation("WasherBookings", fields: [washerId], references: [id])
+  payment      Payment?      @relation
+  review       Review?
+  coupon       Coupon?       @relation(fields: [couponId], references: [id])
+  couponUsages CouponUsage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+
+  bookings  Booking[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  userId        String
+  bookingId     String        @unique
+  amount        Float
+  status        PaymentStatus
+  method        PaymentMethod
+  transactionId String?
+
+  // Relations
+  user    User    @relation(fields: [userId], references: [id])
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Review {
+  id        String  @id @default(cuid())
+  bookingId String  @unique
+  userId    String // Reviewer (Customer)
+  washerId  String // Reviewed (Washer)
+  rating    Int
+  comment   String?
+
+  // Relations
+  booking Booking @relation(fields: [bookingId], references: [id])
+  user    User    @relation("UserReviews", fields: [userId], references: [id])
+  washer  User    @relation("WasherReviews", fields: [washerId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Coupon {
+  id          String       @id @default(cuid())
+  code        String       @unique
+  description String?
+  discount    Float // value: 25 or 25%
+  type        DiscountType @default(FLAT)
+  maxUses     Int?
+  uses        Int          @default(0)
+  expiresAt   DateTime?
+  isActive    Boolean      @default(true)
+
+  bookings     Booking[]
+  couponUsages CouponUsage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CouponUsage {
+  id        String  @id @default(cuid())
+  userId    String
+  couponId  String
+  bookingId String?
+
+  user    User     @relation(fields: [userId], references: [id])
+  coupon  Coupon   @relation(fields: [couponId], references: [id])
+  booking Booking? @relation(fields: [bookingId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, couponId]) // Ensures each user uses a coupon only once
+}
