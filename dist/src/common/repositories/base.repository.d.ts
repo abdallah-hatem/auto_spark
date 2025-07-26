@@ -7,7 +7,7 @@ export declare abstract class BaseRepository<T, CreateDto, UpdateDto> implements
     protected get model(): any;
     create(data: CreateDto): Promise<T>;
     findAll(): Promise<T[]>;
-    findAllWithPagination(page?: number, limit?: number): Promise<{
+    findAllWithPagination(page?: number, limit?: number, search?: string, searchFields?: string[], where?: any): Promise<{
         data: T[];
         total: number;
         page: number;

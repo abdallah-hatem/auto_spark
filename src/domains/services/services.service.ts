@@ -8,6 +8,7 @@ import { CreateServiceDto } from './dto/create-service.dto';
 import { Service } from './entities/service.entity';
 import { Pagination } from '@/common/interfaces/api-response.interface';
 import { UpdateServiceDto } from './dto/update-service.dto';
+import { ServicesQueryDto } from './dto/services.query.dto';
 
 @Injectable()
 export class ServicesService {
@@ -20,8 +21,22 @@ export class ServicesService {
   async findAllWithPagination(
     page: number,
     limit: number,
+    search?: string,
+    filter?: ServicesQueryDto,
   ): Promise<Pagination<Service>> {
-    return this.serviceRepository.findAllWithPagination(page, limit);
+    const searchFields = ['name', 'description'];
+
+    const { name } = filter || {};
+    const where = {
+      name,
+    };
+    return this.serviceRepository.findAllWithPagination(
+      page,
+      limit,
+      search,
+      searchFields,
+      where,
+    );
   }
 
   async findById(id: string): Promise<Service> {

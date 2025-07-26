@@ -30,15 +30,26 @@ let BaseRepository = class BaseRepository {
     async findAll() {
         return this.model.findMany();
     }
-    async findAllWithPagination(page = 1, limit = 10) {
+    async findAllWithPagination(page = 1, limit = 10, search, searchFields, where) {
         if (limit > 20) {
             limit = 20;
+        }
+        const whereCondition = {
+            ...where,
+        };
+        if (search && searchFields && searchFields.length > 0) {
+            whereCondition.OR = searchFields.map((field) => ({
+                [field]: { contains: search, mode: 'insensitive' },
+            }));
         }
         const data = await this.model.findMany({
             skip: (page - 1) * limit,
             take: limit,
+            where: whereCondition,
         });
-        const total = await this.model.count();
+        const total = await this.model.count({
+            where: whereCondition,
+        });
         const hasNextPage = page * limit < total;
         const hasPreviousPage = page > 1;
         return {

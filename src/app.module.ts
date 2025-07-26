@@ -10,6 +10,7 @@ import { ResponseInterceptor } from '@/common/interceptors/response.interceptor'
 import { LoggerMiddleware } from '@/common/middleware/logger.middleware';
 import { LoggerService } from '@/common/services/logger.service';
 import { ServicesModule } from '@/domains/services/services.module';
+import { CouponsModule } from '@/domains/coupons/coupons.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ServicesModule } from '@/domains/services/services.module';
     UsersModule,
     AuthModule,
     ServicesModule,
+    CouponsModule,
   ],
   controllers: [],
   providers: [

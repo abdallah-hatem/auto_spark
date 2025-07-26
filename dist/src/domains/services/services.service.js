@@ -20,8 +20,13 @@ let ServicesService = class ServicesService {
     async findAll() {
         return this.serviceRepository.findAll();
     }
-    async findAllWithPagination(page, limit) {
-        return this.serviceRepository.findAllWithPagination(page, limit);
+    async findAllWithPagination(page, limit, search, filter) {
+        const searchFields = ['name', 'description'];
+        const { name } = filter || {};
+        const where = {
+            name,
+        };
+        return this.serviceRepository.findAllWithPagination(page, limit, search, searchFields, where);
     }
     async findById(id) {
         const service = await this.serviceRepository.findById(id);

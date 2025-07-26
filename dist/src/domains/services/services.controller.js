@@ -19,13 +19,14 @@ const auth_decorator_1 = require("../auth/decorators/auth.decorator");
 const create_service_dto_1 = require("./dto/create-service.dto");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 const update_service_dto_1 = require("./dto/update-service.dto");
+const services_query_dto_1 = require("./dto/services.query.dto");
 let ServicesController = class ServicesController {
     servicesService;
     constructor(servicesService) {
         this.servicesService = servicesService;
     }
-    async findAll(page = 1, limit = 10) {
-        return this.servicesService.findAllWithPagination(page, limit);
+    async findAll(query) {
+        return this.servicesService.findAllWithPagination(query.page, query.limit, query.search, query);
     }
     async create(createServiceDto) {
         return this.servicesService.create(createServiceDto);
@@ -41,10 +42,9 @@ exports.ServicesController = ServicesController;
 __decorate([
     (0, common_1.Get)(),
     (0, auth_decorator_1.Auth)(),
-    __param(0, (0, common_1.Query)('page')),
-    __param(1, (0, common_1.Query)('limit')),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:paramtypes", [services_query_dto_1.ServicesQueryDto]),
     __metadata("design:returntype", Promise)
 ], ServicesController.prototype, "findAll", null);
 __decorate([

@@ -1,7 +1,7 @@
 export interface IRepository<T, CreateDto, UpdateDto> {
     create(data: CreateDto): Promise<T>;
     findAll(): Promise<T[]>;
-    findAllWithPagination(page: number, limit: number): Promise<{
+    findAllWithPagination(page: number, limit: number, search?: string, searchFields?: string[], filter?: any): Promise<{
         data: T[];
         total: number;
         page: number;

@@ -19,6 +19,7 @@ const response_interceptor_1 = require("./common/interceptors/response.intercept
 const logger_middleware_1 = require("./common/middleware/logger.middleware");
 const logger_service_1 = require("./common/services/logger.service");
 const services_module_1 = require("./domains/services/services.module");
+const coupons_module_1 = require("./domains/coupons/coupons.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer.apply(logger_middleware_1.LoggerMiddleware).forRoutes('*');
@@ -36,6 +37,7 @@ exports.AppModule = AppModule = __decorate([
             users_module_1.UsersModule,
             auth_module_1.AuthModule,
             services_module_1.ServicesModule,
+            coupons_module_1.CouponsModule,
         ],
         controllers: [],
         providers: [

@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  UsePipes,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { Service } from './entities/service.entity';
@@ -15,6 +16,7 @@ import { Auth } from '@/domains/auth/decorators/auth.decorator';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { IsAdmin } from '@/domains/auth/decorators/roles.decorator';
 import { UpdateServiceDto } from './dto/update-service.dto';
+import { ServicesQueryDto } from './dto/services.query.dto';
 
 @Controller('services')
 export class ServicesController {
@@ -23,10 +25,14 @@ export class ServicesController {
   @Get()
   @Auth()
   async findAll(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
+    @Query() query: ServicesQueryDto,
   ): Promise<Pagination<Service>> {
-    return this.servicesService.findAllWithPagination(page, limit);
+    return this.servicesService.findAllWithPagination(
+      query.page,
+      query.limit,
+      query.search,
+      query,
+    );
   }
 
   @Post()

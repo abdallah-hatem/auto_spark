@@ -25,9 +25,29 @@ export abstract class BaseRepository<T, CreateDto, UpdateDto>
     return this.model.findMany();
   }
 
+  /**
+   * Generic pagination with search functionality.
+   * Each repository can override this method to define their own searchable fields.
+   *
+   * @param page - Page number (starts from 1)
+   * @param limit - Number of items per page (max 20)
+   * @param search - Search term (optional)
+   * @param searchFields - Array of field names to search in (optional)
+   * @returns Paginated results with metadata
+   *
+   * @example
+   * // In a specific repository:
+   * async findAllWithPagination(page = 1, limit = 10, search?) {
+   *   const searchFields = ['name', 'email', 'phone'];
+   *   return super.findAllWithPagination(page, limit, search, searchFields);
+   * }
+   */
   async findAllWithPagination(
     page: number = 1,
     limit: number = 10,
+    search?: string,
+    searchFields?: string[],
+    where?: any,
   ): Promise<{
     data: T[];
     total: number;
@@ -40,12 +60,27 @@ export abstract class BaseRepository<T, CreateDto, UpdateDto>
       limit = 20;
     }
 
+    // Build search conditions dynamically
+    const whereCondition: any = {
+      ...where,
+    };
+
+    if (search && searchFields && searchFields.length > 0) {
+      whereCondition.OR = searchFields.map((field) => ({
+        [field]: { contains: search, mode: 'insensitive' },
+      }));
+    }
+
     const data = await this.model.findMany({
       skip: (page - 1) * limit,
       take: limit,
+      where: whereCondition,
     });
 
-    const total = await this.model.count();
+    const total = await this.model.count({
+      where: whereCondition,
+    });
+
     const hasNextPage = page * limit < total;
     const hasPreviousPage = page > 1;
 

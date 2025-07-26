@@ -4,6 +4,9 @@ export interface IRepository<T, CreateDto, UpdateDto> {
   findAllWithPagination(
     page: number,
     limit: number,
+    search?: string,
+    searchFields?: string[],
+    filter?: any,
   ): Promise<{
     data: T[];
     total: number;
