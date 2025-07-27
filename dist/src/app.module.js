@@ -20,6 +20,7 @@ const logger_middleware_1 = require("./common/middleware/logger.middleware");
 const logger_service_1 = require("./common/services/logger.service");
 const services_module_1 = require("./domains/services/services.module");
 const coupons_module_1 = require("./domains/coupons/coupons.module");
+const notifications_module_1 = require("./domains/notifications/notifications.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer.apply(logger_middleware_1.LoggerMiddleware).forRoutes('*');
@@ -38,6 +39,7 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             services_module_1.ServicesModule,
             coupons_module_1.CouponsModule,
+            notifications_module_1.NotificationsModule,
         ],
         controllers: [],
         providers: [

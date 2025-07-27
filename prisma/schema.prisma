@@ -49,6 +49,7 @@ model User {
   address     String?
   lat         Float?
   lng         Float?
+  deviceToken String?
 
   // Relations
   bookings         Booking[]     @relation("CustomerBookings")

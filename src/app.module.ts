@@ -11,6 +11,7 @@ import { LoggerMiddleware } from '@/common/middleware/logger.middleware';
 import { LoggerService } from '@/common/services/logger.service';
 import { ServicesModule } from '@/domains/services/services.module';
 import { CouponsModule } from '@/domains/coupons/coupons.module';
+import { NotificationsModule } from '@/domains/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CouponsModule } from '@/domains/coupons/coupons.module';
     AuthModule,
     ServicesModule,
     CouponsModule,
+    NotificationsModule,
   ],
   controllers: [],
   providers: [

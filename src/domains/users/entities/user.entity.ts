@@ -11,6 +11,7 @@ export interface User {
   address?: string;
   lat?: number;
   lng?: number;
+  deviceToken?: string;
   createdAt: Date;
   updatedAt: Date;
 }
