@@ -12,6 +12,7 @@ import { LoggerService } from '@/common/services/logger.service';
 import { ServicesModule } from '@/domains/services/services.module';
 import { CouponsModule } from '@/domains/coupons/coupons.module';
 import { NotificationsModule } from '@/domains/notifications/notifications.module';
+import { BookingModule } from './domains/booking/booking.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { NotificationsModule } from '@/domains/notifications/notifications.modul
     ServicesModule,
     CouponsModule,
     NotificationsModule,
+    BookingModule,
   ],
   controllers: [],
   providers: [

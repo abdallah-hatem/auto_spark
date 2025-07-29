@@ -13,12 +13,13 @@ const users_controller_1 = require("./users.controller");
 const user_repository_1 = require("./repositories/user.repository");
 const database_module_1 = require("../../database/database.module");
 const logger_service_1 = require("../../common/services/logger.service");
+const notifications_module_1 = require("../notifications/notifications.module");
 let UsersModule = class UsersModule {
 };
 exports.UsersModule = UsersModule;
 exports.UsersModule = UsersModule = __decorate([
     (0, common_1.Module)({
-        imports: [database_module_1.DatabaseModule],
+        imports: [database_module_1.DatabaseModule, notifications_module_1.NotificationsModule],
         controllers: [users_controller_1.UsersController],
         providers: [users_service_1.UsersService, user_repository_1.UserRepository, logger_service_1.LoggerService],
         exports: [users_service_1.UsersService],

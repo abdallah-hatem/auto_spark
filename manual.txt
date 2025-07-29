@@ -1,0 +1,20 @@
+washer:
+
+{
+    "email": "washer1@gmail.com",
+    "password": "washer@123",
+}
+
+user:
+
+{
+    "email": "user1@gmail.com",
+    "password": "user@123",
+}
+
+Admin:
+
+{
+    "email": "admin@carwash.com",
+    "password": "admin@123",
+}

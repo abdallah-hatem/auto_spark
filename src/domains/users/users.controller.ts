@@ -9,6 +9,7 @@ import {
   UseGuards,
   Query,
   Req,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -37,5 +38,11 @@ export class UsersController {
       200,
       req.url,
     );
+  }
+
+  @Put(':id')
+  @Auth()
+  async updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
+    return this.usersService.update(id, body);
   }
 }

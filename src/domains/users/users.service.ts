@@ -2,6 +2,7 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserRepository } from '@/domains/users/repositories/user.repository';
 import { CreateUserDto } from '@/domains/users/dto/create-user.dto';
@@ -15,13 +16,13 @@ import {
 import { LoggerService } from '@/common/services/logger.service';
 import * as bcrypt from 'bcryptjs';
 import { Pagination } from '@/common/interfaces/api-response.interface';
+import { Booking } from '@prisma/client';
+import { BookingsQueryDto } from '../booking/dto/booking.query.dto';
+import { UsersQueryDto } from './dto/user.query.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly userRepository: UserRepository,
-    private readonly loggerService: LoggerService,
-  ) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   @Log({
     action: 'create_user',
@@ -88,11 +89,25 @@ export class UsersService {
       success: 'Paginated users fetched successfully',
     },
   })
-  async findAllWithPagination(
-    page: number,
-    limit: number,
-  ): Promise<Pagination<User>> {
-    return this.userRepository.findAllWithPagination(page, limit);
+  async findAllWithPagination(query: UsersQueryDto): Promise<{
+    data: User[];
+    total: number;
+    page: number;
+    limit: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  }> {
+    const searchFields = [];
+    const { role } = query;
+    return this.userRepository.findAllWithPagination(
+      query.page,
+      query.limit,
+      query.search,
+      searchFields,
+      {
+        role,
+      },
+    );
   }
 
   @Log({

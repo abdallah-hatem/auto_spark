@@ -20,6 +20,7 @@ class CreateUserDto {
     address;
     lat;
     lng;
+    deviceToken;
 }
 exports.CreateUserDto = CreateUserDto;
 __decorate([
@@ -53,4 +54,9 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], CreateUserDto.prototype, "lng", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], CreateUserDto.prototype, "deviceToken", void 0);
 //# sourceMappingURL=create-user.dto.js.map

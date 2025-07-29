@@ -30,4 +30,8 @@ export class CreateUserDto {
   @IsNumber()
   @IsOptional()
   lng?: number;
+
+  @IsString()
+  @IsOptional()
+  deviceToken?: string | null;
 }

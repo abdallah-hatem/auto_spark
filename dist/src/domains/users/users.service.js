@@ -15,14 +15,12 @@ const user_repository_1 = require("./repositories/user.repository");
 const create_user_dto_1 = require("./dto/create-user.dto");
 const update_user_dto_1 = require("./dto/update-user.dto");
 const log_decorator_1 = require("../../common/decorators/log.decorator");
-const logger_service_1 = require("../../common/services/logger.service");
 const bcrypt = require("bcryptjs");
+const user_query_dto_1 = require("./dto/user.query.dto");
 let UsersService = class UsersService {
     userRepository;
-    loggerService;
-    constructor(userRepository, loggerService) {
+    constructor(userRepository) {
         this.userRepository = userRepository;
-        this.loggerService = loggerService;
     }
     async create(createUserDto) {
         if (createUserDto.email) {
@@ -45,8 +43,12 @@ let UsersService = class UsersService {
     async findAll() {
         return this.userRepository.findAll();
     }
-    async findAllWithPagination(page, limit) {
-        return this.userRepository.findAllWithPagination(page, limit);
+    async findAllWithPagination(query) {
+        const searchFields = [];
+        const { role } = query;
+        return this.userRepository.findAllWithPagination(query.page, query.limit, query.search, searchFields, {
+            role,
+        });
     }
     async findById(id) {
         const user = await this.userRepository.findById(id);
@@ -113,7 +115,7 @@ __decorate([
         },
     }),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:paramtypes", [user_query_dto_1.UsersQueryDto]),
     __metadata("design:returntype", Promise)
 ], UsersService.prototype, "findAllWithPagination", null);
 __decorate([
@@ -177,7 +179,6 @@ __decorate([
 ], UsersService.prototype, "remove", null);
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [user_repository_1.UserRepository,
-        logger_service_1.LoggerService])
+    __metadata("design:paramtypes", [user_repository_1.UserRepository])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map

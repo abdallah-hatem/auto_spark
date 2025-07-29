@@ -6,4 +6,5 @@ export declare class CreateUserDto {
     address?: string;
     lat?: number;
     lng?: number;
+    deviceToken?: string | null;
 }

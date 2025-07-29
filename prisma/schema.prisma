@@ -76,6 +76,8 @@ model Booking {
   address       String
   price         Float // after discount
   originalPrice Float // before discount
+  paymentId     String?
+  reviewId      String?
 
   // Relations
   service      Service       @relation(fields: [serviceId], references: [id])
