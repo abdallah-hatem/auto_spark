@@ -32,12 +32,7 @@ export class CouponsController {
   @Get()
   @Auth()
   async findAll(@Query() query: CouponsQueryDto): Promise<Pagination<Coupon>> {
-    return this.couponsService.findAllWithPagination(
-      query.page,
-      query.limit,
-      query.search,
-      query,
-    );
+    return this.couponsService.findAllWithPagination(query);
   }
 
   @Get('active')

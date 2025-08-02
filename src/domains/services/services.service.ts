@@ -19,21 +19,19 @@ export class ServicesService {
   }
 
   async findAllWithPagination(
-    page: number,
-    limit: number,
-    search?: string,
-    filter?: ServicesQueryDto,
+    query: ServicesQueryDto,
   ): Promise<Pagination<Service>> {
     const searchFields = ['name', 'description'];
 
-    const { name } = filter || {};
+    const { name } = query || {};
     const where = {
       name,
+      ...query.where,
     };
     return this.serviceRepository.findAllWithPagination(
-      page,
-      limit,
-      search,
+      query.page,
+      query.limit,
+      query.search,
       searchFields,
       where,
     );

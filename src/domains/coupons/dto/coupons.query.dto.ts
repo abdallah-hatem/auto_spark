@@ -1,8 +1,8 @@
 import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
 import { PaginationQueryDto } from '@/common/dto';
-import { DiscountType } from '@prisma/client';
+import { Coupon, DiscountType } from '@prisma/client';
 
-export class CouponsQueryDto extends PaginationQueryDto {
+export class CouponsQueryDto extends PaginationQueryDto<Coupon> {
   @IsOptional()
   @IsString()
   code?: string;

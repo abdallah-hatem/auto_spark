@@ -5,6 +5,14 @@ washer:
     "password": "washer@123",
 }
 
+washer 2 (deviceToken):
+
+{
+    "email": "user2@gmail.com",
+    "password": "washer@123",
+}
+
+
 user:
 
 {

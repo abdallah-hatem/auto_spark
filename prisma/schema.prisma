@@ -70,7 +70,7 @@ model Booking {
   serviceId     String
   couponId      String?
   status        BookingStatus @default(PENDING)
-  scheduledAt   DateTime
+  scheduledAt   DateTime?
   lat           Float
   lng           Float
   address       String

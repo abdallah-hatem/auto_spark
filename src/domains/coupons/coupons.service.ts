@@ -31,15 +31,11 @@ export class CouponsService {
   }
 
   async findAllWithPagination(
-    page: number,
-    limit: number,
-    search?: string,
-    filter?: CouponsQueryDto,
+    query: CouponsQueryDto,
   ): Promise<Pagination<Coupon>> {
-    console.log(filter, 'filter');
     const searchFields = ['code', 'description'];
 
-    const { code, type, isActive, expiresAt } = filter || {};
+    const { code, type, isActive, expiresAt } = query || {};
     const where = {
       code,
       type,
@@ -47,9 +43,9 @@ export class CouponsService {
       expiresAt,
     };
     return this.couponRepository.findAllWithPagination(
-      page,
-      limit,
-      search,
+      query.page,
+      query.limit,
+      query.search,
       searchFields,
       where,
     );

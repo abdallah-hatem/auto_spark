@@ -27,12 +27,7 @@ export class ServicesController {
   async findAll(
     @Query() query: ServicesQueryDto,
   ): Promise<Pagination<Service>> {
-    return this.servicesService.findAllWithPagination(
-      query.page,
-      query.limit,
-      query.search,
-      query,
-    );
+    return this.servicesService.findAllWithPagination(query);
   }
 
   @Post()

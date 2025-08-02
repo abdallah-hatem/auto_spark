@@ -98,7 +98,7 @@ export class UsersService {
     hasPreviousPage: boolean;
   }> {
     const searchFields = [];
-    const { role } = query;
+    const { role, where } = query;
     return this.userRepository.findAllWithPagination(
       query.page,
       query.limit,
@@ -106,6 +106,7 @@ export class UsersService {
       searchFields,
       {
         role,
+        ...where,
       },
     );
   }

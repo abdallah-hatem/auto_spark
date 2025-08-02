@@ -1,7 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsPositive, IsString, Max, Min } from 'class-validator';
+import { IsObject, IsOptional, IsPositive, IsString, Max, Min } from 'class-validator';
 
-export class PaginationQueryDto {
+type Where<T> = {
+  [K in keyof T]?: T[K];
+};
+
+export class PaginationQueryDto<T> {
   @IsOptional()
   @Type(() => Number)
   @IsPositive()
@@ -18,4 +22,8 @@ export class PaginationQueryDto {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @IsOptional()
+  @IsObject()
+  where?: Where<T> | Record<string, any>;
 }

@@ -1,9 +1,13 @@
 import { PaginationQueryDto } from '@/common/dto';
-import { IsEnum, IsOptional } from 'class-validator';
-import { UserRole } from '@prisma/client';
+import { IsBoolean, IsEnum, IsOptional } from 'class-validator';
+import { User, UserRole } from '@prisma/client';
 
-export class UsersQueryDto extends PaginationQueryDto {
+export class UsersQueryDto extends PaginationQueryDto<User> {
   @IsOptional()
   @IsEnum(UserRole)
   role?: UserRole;
+
+  @IsOptional()
+  @IsBoolean()
+  isAvailable?: boolean;
 }
