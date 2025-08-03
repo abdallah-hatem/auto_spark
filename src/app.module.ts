@@ -13,6 +13,7 @@ import { ServicesModule } from '@/domains/services/services.module';
 import { CouponsModule } from '@/domains/coupons/coupons.module';
 import { NotificationsModule } from '@/domains/notifications/notifications.module';
 import { BookingModule } from './domains/booking/booking.module';
+import { PaymentModule } from './domains/payment/payment.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { BookingModule } from './domains/booking/booking.module';
     CouponsModule,
     NotificationsModule,
     BookingModule,
+    PaymentModule,
   ],
   controllers: [],
   providers: [

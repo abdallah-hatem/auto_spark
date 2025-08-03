@@ -117,7 +117,13 @@ export class BookingService {
     }
 
     // handle status change
-    this.handleStatusChange(booking.status, updateBookingDto.status, user);
+    await this.handleStatusChange(
+      booking.status,
+      updateBookingDto.status,
+      user,
+      booking.customerId,
+      booking.washerId,
+    );
 
     const payload = {
       ...updateBookingDto,
@@ -132,11 +138,13 @@ export class BookingService {
     return this.bookingRepository.delete(id);
   }
 
-  private handleStatusChange(
+  private async handleStatusChange(
     oldStatus: BookingStatus,
     newStatus: BookingStatus,
     user: User,
-  ): BookingStatus {
+    customerId?: string,
+    washerId?: string,
+  ): Promise<BookingStatus> {
     const isAdmin = user.role === UserRole.ADMIN;
     const isWasher = user.role === UserRole.WASHER;
     const isCustomer = user.role === UserRole.CUSTOMER;
@@ -148,6 +156,32 @@ export class BookingService {
 
     // If trying to cancel, allow it for all roles
     if (newStatus === BookingStatus.CANCELLED) {
+      if (!isWasher) return BookingStatus.CANCELLED;
+
+      // update washer availability
+      await this.usersService.update(user.id, {
+        isAvailable: true,
+      });
+
+      if (isWasher && customerId) {
+        await this.notificationsService.sendToUser({
+          userId: customerId,
+          title: 'Booking cancelled by washer',
+          body: 'Your booking has been cancelled by washer',
+          data: {},
+        });
+      }
+
+      if (isCustomer && washerId) {
+        // send notification to washer
+        await this.notificationsService.sendToUser({
+          userId: washerId,
+          title: 'Booking cancelled by customer',
+          body: 'Your booking has been cancelled by customer',
+          data: {},
+        });
+      }
+
       return BookingStatus.CANCELLED;
     }
 
@@ -186,6 +220,11 @@ export class BookingService {
         oldStatus === BookingStatus.PENDING &&
         newStatus === BookingStatus.ACCEPTED
       ) {
+        // update washer availability
+        await this.usersService.update(user.id, {
+          isAvailable: false,
+        });
+
         return BookingStatus.ACCEPTED;
       }
       if (
@@ -198,6 +237,11 @@ export class BookingService {
         oldStatus === BookingStatus.IN_PROGRESS &&
         newStatus === BookingStatus.COMPLETED
       ) {
+        // update washer availability
+        await this.usersService.update(user.id, {
+          isAvailable: true,
+        });
+
         return BookingStatus.COMPLETED;
       }
       throw new BadRequestException(
