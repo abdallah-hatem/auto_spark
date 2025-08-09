@@ -1,9 +1,14 @@
-import { Injectable, OnModuleInit, Logger, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  Logger,
+  BadRequestException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as admin from 'firebase-admin';
 import { FirebaseConfig, FCMMessage } from '../interfaces/firebase.interface';
 import { LoggerService } from '@/common/services/logger.service';
-import * as serviceAccount from '@/config/fcm.config.json';
+import * as serviceAccount from '@/config/firebase.config';
 
 @Injectable()
 export class FirebaseService implements OnModuleInit {
@@ -23,13 +28,18 @@ export class FirebaseService implements OnModuleInit {
     try {
       // Initialize Firebase Admin SDK using imported service account
       this.app = admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+        credential: admin.credential.cert(serviceAccount.default()),
       });
 
-      this.loggerService.logSuccess('Firebase Admin SDK initialized successfully');
+      this.loggerService.logSuccess(
+        'Firebase Admin SDK initialized successfully',
+      );
       this.logger.log('🔥 Firebase FCM service is ready');
     } catch (error) {
-      this.loggerService.logSystemError('Failed to initialize Firebase Admin SDK', error);
+      this.loggerService.logSystemError(
+        'Failed to initialize Firebase Admin SDK',
+        error,
+      );
       throw error;
     }
   }
@@ -57,15 +67,23 @@ export class FirebaseService implements OnModuleInit {
         },
       });
 
-      this.loggerService.logSuccess(`Notification sent successfully: ${response}`);
+      this.loggerService.logSuccess(
+        `Notification sent successfully: ${response}`,
+      );
       return response;
     } catch (error) {
       this.loggerService.logSystemError('Failed to send notification', error);
-      throw new BadRequestException(`Failed to send notification: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to send notification: ${error.message}`,
+      );
     }
   }
 
-  async sendBulkNotifications(tokens: string[], notification: any, data?: any): Promise<admin.messaging.BatchResponse> {
+  async sendBulkNotifications(
+    tokens: string[],
+    notification: any,
+    data?: any,
+  ): Promise<admin.messaging.BatchResponse> {
     try {
       if (tokens.length === 0) {
         throw new BadRequestException('No device tokens provided');
@@ -111,22 +129,30 @@ export class FirebaseService implements OnModuleInit {
 
       return response;
     } catch (error) {
-      this.loggerService.logSystemError('Failed to send bulk notifications', error);
-      throw new BadRequestException(`Failed to send bulk notifications: ${error.message}`);
+      this.loggerService.logSystemError(
+        'Failed to send bulk notifications',
+        error,
+      );
+      throw new BadRequestException(
+        `Failed to send bulk notifications: ${error.message}`,
+      );
     }
   }
 
   async verifyToken(token: string): Promise<boolean> {
     try {
       // Try to send a test message to verify token validity
-      await admin.messaging().send({
-        token,
-        data: { test: 'true' },
-      }, true); // dry-run mode
+      await admin.messaging().send(
+        {
+          token,
+          data: { test: 'true' },
+        },
+        true,
+      ); // dry-run mode
       return true;
     } catch (error) {
       this.logger.warn(`Invalid FCM token: ${error.message}`);
       return false;
     }
   }
-} 
+}
