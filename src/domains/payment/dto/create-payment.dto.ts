@@ -8,9 +8,9 @@ import {
 import { PaymentMethod, PaymentStatus } from '@prisma/client';
 
 export class CreatePaymentDto {
-  // @IsString()
-  // @IsNotEmpty()
-  // userId: string;
+  @IsString()
+  @IsNotEmpty()
+  userId: string;
 
   @IsString()
   @IsNotEmpty()

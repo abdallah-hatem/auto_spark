@@ -48,6 +48,7 @@ export class PaymentService {
       amount: booking.price,
       method: 'CASH',
       status: 'COMPLETED',
+      userId: booking.customerId,
     });
   }
 
