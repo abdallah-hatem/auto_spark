@@ -3,6 +3,8 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { BookingRepository } from './repositories/booking.repository';
 import { CreateBookingDto } from './dto/create-booking.dto';
@@ -12,6 +14,7 @@ import { UpdateBookingDto } from './dto/update-booking.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import { UsersService } from '../users/users.service';
 import { BookingStatus, User, UserRole } from '@prisma/client';
+import { PaymentService } from '../payment/payment.service';
 
 @Injectable()
 export class BookingService {
@@ -19,6 +22,8 @@ export class BookingService {
     private readonly bookingRepository: BookingRepository,
     private readonly notificationsService: NotificationsService,
     private readonly usersService: UsersService,
+    @Inject(forwardRef(() => PaymentService))
+    private readonly paymentService: PaymentService,
   ) {}
 
   async createBooking(
@@ -117,13 +122,20 @@ export class BookingService {
     }
 
     // handle status change
-    await this.handleStatusChange(
+    const newStatus = await this.handleStatusChange(
       booking.status,
       updateBookingDto.status,
       user,
       booking.customerId,
       booking.washerId,
     );
+
+    // if new status is completed, add new payment
+    if (newStatus === BookingStatus.COMPLETED) {
+      await this.paymentService.createPaymentFromBooking({
+        bookingId: booking.id,
+      });
+    }
 
     const payload = {
       ...updateBookingDto,
@@ -154,8 +166,12 @@ export class BookingService {
       throw new BadRequestException('Cannot modify a cancelled booking');
     }
 
-    // If trying to cancel, allow it for all roles
-    if (newStatus === BookingStatus.CANCELLED) {
+    // If trying to cancel, allow it for all roles, but you can't cancel if the booking is in progress or completed
+    if (
+      newStatus === BookingStatus.CANCELLED &&
+      oldStatus !== BookingStatus.IN_PROGRESS &&
+      oldStatus !== BookingStatus.COMPLETED
+    ) {
       if (!isWasher) return BookingStatus.CANCELLED;
 
       // update washer availability

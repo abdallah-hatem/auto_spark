@@ -24,5 +24,5 @@ Admin:
 
 {
     "email": "admin@carwash.com",
-    "password": "admin@123",
+    "password": "admin@123"
 }
