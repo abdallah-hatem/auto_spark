@@ -1,4 +1,4 @@
-import { UserRole } from 'src/common/enums/user.enum';
+import { UserRole } from '@/common/enums/user.enum';
 import { CreateUserDto } from '../../users/dto/create-user.dto';
 import { IsEnum, IsOptional } from 'class-validator';
 
